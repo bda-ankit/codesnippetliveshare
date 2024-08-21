@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Codes | Ankit</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* Dark background */
+            color: #ffffff; /* White text color */
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+
+        h1 {
+            margin: 0;
+            padding: 20px;
+            background-color: #1e1e1e; /* Slightly lighter dark background for header */
+            color: #ffffff; /* White text color */
+            text-align: center;
+        }
+
+        .editor-container {
+            display: flex;
+            height: 100%; /* Full height to fit remaining space */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .line-numbers {
+            background-color: #292929;
+            color: #ffffff; /* Light gray for line numbers */
+            padding: 10px;
+            border-right: 2px solid #ffffff ; /* Border to separate line numbers from text */
+            width: 25px;
+            text-align: right;
+            user-select: none; /* Prevent text selection */
+            overflow-y: auto;
+            white-space: pre; /* Preserve white space and line breaks */
+        }
+
+        .code-editor {
+            flex: 1;
+            background-color: #292929; /* Slightly lighter dark background for editor */
+            color: #ffffff; /* White text color */
+            border: none; /* Remove border */
+            padding: 10px; /* Add some padding */
+            font-size: 16px; /* Font size for better readability */
+            resize: none; /* Disable resizing */
+            box-sizing: border-box; /* Include padding in width/height */
+            overflow-y: auto; /* Scrollable content */
+            height: 100%;
+            margin-left: 10px; /* Space between line numbers and editor */
+        }
+    </style>
+</head>
+<body>
+    <h1>Write anything below and share with anyone | By @Ankit Parmar</h1>
+    <form id="contentForm" method="post">
+        <div class="editor-container">
+            <div class="line-numbers" id="lineNumbers"></div>
+            <textarea class="code-editor" placeholder="Write here and share.." id="codeEditor" name="content">{{ content }}</textarea>
+        </div>
+    </form>
+    <script>
+        const codeEditor = document.getElementById('codeEditor');
+        const lineNumbers = document.getElementById('lineNumbers');
+        let typingTimer;                // Timer identifier
+        const doneTypingInterval = 2000; // Time in ms (2 seconds)
+
+        function updateLineNumbers() {
+            const lines = codeEditor.value.split('\n').length;
+            let numbers = '';
+            for (let i = 1; i <= lines; i++) {
+                numbers += i + '\n';
+            }
+            lineNumbers.textContent = numbers;
+        }
+
+        function autoSave() {
+            const content = codeEditor.value;
+            const endpoint = document.location.pathname; // Get the current path
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            }).then(response => response.json())
+              .then(data => console.log('Save successful:', data))
+              .catch(error => console.error('Save failed:', error));
+        }
+
+        // Initial line numbers update
+        updateLineNumbers();
+
+        // Update line numbers on input
+        codeEditor.addEventListener('input', function() {
+            updateLineNumbers();
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(autoSave, doneTypingInterval);
+        });
+
+        // Sync line numbers with scrolling
+        codeEditor.addEventListener('scroll', function() {
+            lineNumbers.scrollTop = codeEditor.scrollTop;
+        });
+    </script>
+</body>
+</html>

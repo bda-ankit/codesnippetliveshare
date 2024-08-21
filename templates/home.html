@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Content Management</title>
+    <style>
+        body {
+            margin: 100px;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: top;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 50px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Content Management App &nbsp; - &nbsp; @Ankit Parmar</h1>
+        <button id="generateButton">Click here to get your code space !</button>
+    </div>
+    <script>
+        document.getElementById('generateButton').addEventListener('click', function() {
+            console.log('Button clicked'); // Debugging line
+            fetch('/generate', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: '' }) // Send empty content initially
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data received:', data); // Debugging line
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    console.error('No URL returned from server');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
